@@ -1,7 +1,7 @@
 
 /******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *   BEATRIZ SANTOS / 002
  *
  *   This java file contains the problem solutions for the methods lastBoulder,
  *   showDuplicates, and pair methods. You should utilize the Java Collection
@@ -61,14 +61,45 @@ public class ProblemSolutions {
      * max element at the top. Taking top Elements and performing the
      * given operations in the question as long as 2 or more boulders;
      * returning the 0 if queue is empty else return pq.peek().
+     *
+     * * create a max heap with largest value at the top
+     *          * while priority queue is not empty
+     *          *  - x = root
+     *          *  - y = max of left and right child
+     *          *  if x == y, then return 0
+     *          * if x > y,
+     *          *      - remove y
+     *          *      - x = x - y
+     *          * recurse
      */
 
   public static int lastBoulder(int[] boulders) {
 
-      //
-      // ADD YOUR CODE HERE - DO NOT FORGET TO ADD YOUR NAME / SECTION # ABOVE
-      //
-      return -1;
+      // create priority queue in reverse order --> O(1)
+      PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
+
+      // populate pq --> O(n log n)
+      for (int i = 0; i < boulders.length; i++){
+          pq.add(boulders[i]);
+      }
+
+      // perform operations while we have two boulders --> O(n)
+      while (pq.size() > 1){
+          // get heaviest by removing top two elements --> O (log n) for each
+          int x = pq.poll();
+          int y = pq.poll();
+          // if not equal, add difference of the two
+          if (x != y){
+              pq.add(x - y); // --> O (log n)
+          }
+
+      }
+      // return last boulders weight --> O(1)
+      if (pq.isEmpty()){
+          return 0;
+      } else {
+          return pq.peek(); // total time complexity of O (n log n)
+      }
   }
 
 
@@ -90,12 +121,33 @@ public class ProblemSolutions {
      */
 
     public static ArrayList<String> showDuplicates(ArrayList<String> input) {
+        // use a hashmap to keep count of repeated strings --> O(n)
+        Map<String, Integer> counter = new HashMap<>();
 
-        //
-        //  YOUR CODE GOES HERE
-        //
-        return new ArrayList<>();  // Make sure result is sorted in ascending order
+        // count frequency of repeated strings --> O(n)
+        for (int i = 0; i < input.size(); i++){
+            String current = input.get(i);
+            // if map contains current key, then add to count
+            if (counter.containsKey(current)){
+                counter.put(current, counter.get(current) + 1);
+            } else {
+                counter.put(current, 1);
+            }
+        }
 
+        // create results arrayList --> O(n) time and space
+        ArrayList<String> result = new ArrayList<>();
+        // for a key in the key set, if the key is repeated more than one, add that frequency to result
+       for (String key : counter.keySet()){
+           if (counter.get(key) > 1){
+               result.add(key);
+           }
+       }
+
+       //ascending order
+        Collections.sort(result);
+
+       return result;
     }
 
 
@@ -127,13 +179,51 @@ public class ProblemSolutions {
      *  to date, though HashSet. Consider using Java's "Collections.sort()" for final
      *  sort of ArrayList before returning so consistent answer. Utilize Oracle's
      *  Java Framework documentation in its use.
+     *
+     *  1. create hashset for quick lookups
+     *  2. create arraylist to store result pairs
+     *  3. for each number in input:
+     *      - calculate complement
+     *      - if complement exists in hashset and != the current num:
+     *          create pair string with smaller num first
+     *          add to result arraylist
+     * 4. sort the results
+     * 5. return result
      */
 
     public static ArrayList<String> pair(int[] input, int k) {
+        // create hashset --> O(n)
+        HashSet<Integer> hash = new HashSet<>();
 
-        //
-        //  YOUR CODE GOES HERE
-        //
-        return new ArrayList<>();  // Make sure returned lists is sorted as indicated above
+        // create new array list
+        ArrayList<String> result = new ArrayList<>();
+
+        // another hashset to track pairs
+        HashSet<String> seen = new HashSet<>();
+
+        // populate hashset --> O(n)
+        for (int i = 0; i < input.length; i++){
+            hash.add(input[i]);
+        }
+
+        // find pairs
+        for (Integer num : input){
+            int complement = k - num;
+            if (hash.contains(complement)){
+                // order in pairs
+                int small = Math.min(num, complement);
+                int big = Math.max(num, complement);
+                // create string for arraylist
+                String pair = "(" + small + ", " + big + ")";
+
+                // add if not seen before
+                if (!seen.contains(pair)){
+                    seen.add(pair);
+                    result.add(pair);
+                }
+            }
+        }
+        Collections.sort(result);
+        return result;  // Make sure returned lists is sorted as indicated above
     }
 }

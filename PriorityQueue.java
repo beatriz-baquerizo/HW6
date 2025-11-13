@@ -1,7 +1,7 @@
 
 /******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *   Beatriz Santos / 002
  *
  *   Note, additional comments provided throughout this source code
  *   is for educational purposes
@@ -150,9 +150,13 @@ class PriorityQueue<E, P> {
      */
 
     public Node add(E e, P priority) {
-
-        // YOUR CODE GOES HERE
-        return null;
+        // create new node with element, priority, and index
+        Node newNode = new Node(e, priority, tree.size());
+        // add node as rightmost leaf
+        tree.add(newNode);
+        // maintain min heap property
+        pullUp(newNode.idx);
+        return newNode;
     }
 
 
@@ -167,8 +171,12 @@ class PriorityQueue<E, P> {
      */
 
     public boolean contains(E e) {
-
-        // ADD YOUR CODE HERE
+        // search thorugh all nodes
+        for (int i = 0; i < tree.size(); i++){
+            if (tree.get(i).value.equals(e)){
+                return true;
+            }
+        }
         return false;
     }
 
